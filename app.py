@@ -1,5 +1,8 @@
 from flask import Flask, request, render_template, url_for, redirect
 import os
+from dotenv import load_dotenv
+
+load_dotenv()  # take environment variables from .env.
 
 app = Flask(__name__)
 
@@ -32,6 +35,9 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
+
+SEND_FROM_EMAIL = os.getenv("SEND_FROM_EMAIL")
+SEND_TO_EMAIL = os.getenv("SEND_TO_EMAIL")
 
 
 def send_mail(
