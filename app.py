@@ -8,13 +8,9 @@ load_dotenv()  # take environment variables from .env.
 SEND_FROM_EMAIL = os.getenv("SEND_FROM_EMAIL")
 SEND_TO_EMAIL = os.getenv("SEND_TO_EMAIL")
 EMAIL_HOST = os.getenv("EMAIL_HOST")
+SUBSCRIBIE_PLAN_URL = os.getenv("SUBSCRIBIE_PLAN_URL")
 
 app = Flask(__name__)
-
-
-@app.route("/appsumo/special-access", methods=["GET"])
-def thanks():
-    return "Thanks! Here's your special access AppSumo Subscribie plan link: ..."
 
 
 @app.route("/", methods=["POST", "GET"])
@@ -30,7 +26,11 @@ def hello_world():
         with open("./submissions.csv", "a") as fp:
             fp.write(submission)
         send_mail()
-        return redirect(url_for("thanks"))
+        redirect_destination = (
+            f"{SUBSCRIBIE_PLAN_URL}?email={email}&redemption_code={redemption_code}"
+        )
+        return redirect(redirect_destination)
+
     return render_template("index.html")
 
 
