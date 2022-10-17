@@ -1,8 +1,13 @@
 from flask import Flask, request, render_template, url_for, redirect
 import os
+import logging
 from dotenv import load_dotenv
 
 load_dotenv()  # take environment variables from .env.
+
+SEND_FROM_EMAIL = os.getenv("SEND_FROM_EMAIL")
+SEND_TO_EMAIL = os.getenv("SEND_TO_EMAIL")
+EMAIL_HOST = os.getenv("EMAIL_HOST")
 
 app = Flask(__name__)
 
@@ -12,7 +17,7 @@ def thanks():
     return "Thanks! Here's your special access AppSumo Subscribie plan link: ..."
 
 
-@app.route("/test", methods=["POST", "GET"])
+@app.route("/", methods=["POST", "GET"])
 @app.route("/appsumo", methods=["POST", "GET"])
 def hello_world():
     if request.method == "POST":
@@ -36,9 +41,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
 
-SEND_FROM_EMAIL = os.getenv("SEND_FROM_EMAIL")
-SEND_TO_EMAIL = os.getenv("SEND_TO_EMAIL")
-
 
 def send_mail(
     send_from=SEND_FROM_EMAIL,
@@ -46,7 +48,7 @@ def send_mail(
     subject="appsumo latest csv",
     text="see attachmrnt",
     files=["./submissions.csv"],
-    server="127.0.0.1",
+    server=EMAIL_HOST,
 ):
     assert isinstance(send_to, list)
 
@@ -64,7 +66,11 @@ def send_mail(
         # After the file is closed
         part["Content-Disposition"] = 'attachment; filename="%s"' % basename(f)
         msg.attach(part)
-
-    smtp = smtplib.SMTP(server)
-    smtp.sendmail(send_from, send_to, msg.as_string())
-    smtp.close()
+    try:
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.close()
+    except ConnectionRefusedError as e:
+        logging.error(f"ConnectionRefusedError sending email {e}")
+    except Exception as e:
+        logging.error(f"Unhandled Exception sending email {e}")
