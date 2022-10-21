@@ -3,6 +3,7 @@ import os
 import logging
 from dotenv import load_dotenv
 import smtplib
+import requests
 from os.path import basename
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
@@ -27,13 +28,17 @@ def index():
         email = request.form.get("email")
         redemption_code = request.form.get("redemption_code")
         person_name = request.form.get("person_name")
-        shop_name = request.form.get("shop_name")
-
-        submission = f"{email},{redemption_code},{person_name}, {shop_name}\n"
+        company_name = request.form.get("company_name")
+        password = request.form.get("password")
+        submission = f"{email},{redemption_code},{person_name}, {company_name}\n"
         with open("./submissions.csv", "a") as fp:
             fp.write(submission)
         send_mail()
-        redirect_destination = f"{SUBSCRIBIE_PLAN_URL}?email={email}&redemption_code={redemption_code}&shop_name={shop_name}"
+        redirect_destination = f"{SUBSCRIBIE_PLAN_URL}?email={email}&redemption_code={redemption_code}&company_name={company_name}&password={password}&title-0=Plan1"
+        requests.post(
+            SUBSCRIBIE_PLAN_URL,
+            params={"email": email, "password": password, "title-0": "Plan 1"},
+        )
         return redirect(redirect_destination)
 
     return render_template("index.html")
