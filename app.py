@@ -21,7 +21,7 @@ app = Flask(__name__)
 
 @app.route("/", methods=["POST", "GET"])
 @app.route("/appsumo", methods=["POST", "GET"])
-def hello_world():
+def index():
     if request.method == "POST":
         print(request.form)
         email = request.form.get("email")
