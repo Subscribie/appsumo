@@ -26,10 +26,10 @@ def index():
         print(request.form)
         email = request.form.get("email")
         redemption_code = request.form.get("redemption_code")
-        lastname = request.form.get("lastname")
+        person_name = request.form.get("person_name")
         shop_name = request.form.get("shop_name")
 
-        submission = f"{email},{redemption_code},{lastname}, {shop_name}\n"
+        submission = f"{email},{redemption_code},{person_name}, {shop_name}\n"
         with open("./submissions.csv", "a") as fp:
             fp.write(submission)
         send_mail()
