@@ -11,6 +11,12 @@ python3 -m venv venv
 . venv/bin/activate
 pip install -r requirements.txt
 ```
+
+Configure: Edit `.env`
+```
+ cp .env.example .env
+```
+
 # Run locally
 ```
 . venv/bin/activate
