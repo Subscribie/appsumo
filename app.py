@@ -1,7 +1,13 @@
-from flask import Flask, request, render_template, url_for, redirect
+from flask import Flask, request, render_template, redirect
 import os
 import logging
 from dotenv import load_dotenv
+import smtplib
+from os.path import basename
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.utils import COMMASPACE, formatdate
 
 load_dotenv()  # take environment variables from .env.
 
@@ -21,25 +27,16 @@ def hello_world():
         email = request.form.get("email")
         redemption_code = request.form.get("redemption_code")
         lastname = request.form.get("lastname")
+        shop_name = request.form.get("shop_name")
 
-        submission = f"{email},{redemption_code},{lastname}\n"
+        submission = f"{email},{redemption_code},{lastname}, {shop_name}\n"
         with open("./submissions.csv", "a") as fp:
             fp.write(submission)
         send_mail()
-        redirect_destination = (
-            f"{SUBSCRIBIE_PLAN_URL}?email={email}&redemption_code={redemption_code}"
-        )
+        redirect_destination = f"{SUBSCRIBIE_PLAN_URL}?email={email}&redemption_code={redemption_code}&shop_name={shop_name}"
         return redirect(redirect_destination)
 
     return render_template("index.html")
-
-
-import smtplib
-from os.path import basename
-from email.mime.application import MIMEApplication
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.utils import COMMASPACE, formatdate
 
 
 def send_mail(
