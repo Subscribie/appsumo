@@ -15,7 +15,7 @@ load_dotenv()  # take environment variables from .env.
 SEND_FROM_EMAIL = os.getenv("SEND_FROM_EMAIL")
 SEND_TO_EMAIL = os.getenv("SEND_TO_EMAIL")
 EMAIL_HOST = os.getenv("EMAIL_HOST")
-SUBSCRIBIE_PLAN_URL = os.getenv("SUBSCRIBIE_PLAN_URL")
+SUBSCRIBIE_SHOP_SUBMISSION_ENDPOINT = os.getenv("SUBSCRIBIE_SHOP_SUBMISSION_ENDPOINT")
 
 app = Flask(__name__)
 
@@ -34,14 +34,33 @@ def index():
         with open("./submissions.csv", "a") as fp:
             fp.write(submission)
         send_mail()
-        redirect_destination = f"{SUBSCRIBIE_PLAN_URL}?email={email}&redemption_code={redemption_code}&company_name={company_name}&password={password}&title-0=Plan1"
-        requests.post(
-            SUBSCRIBIE_PLAN_URL,
-            params={"email": email, "password": password, "title-0": "Plan 1"},
+        # Submit new site build
+        req = requests.post(
+            SUBSCRIBIE_SHOP_SUBMISSION_ENDPOINT,
+            data={
+                "company_name": company_name,
+                "email": email,
+                "password": password,
+                "title-0": "Plan 1",
+                "interval_amount-0": 10099,
+                "interval_unit-0": "monthly",
+                "description-0": "Change plan description in your shop dashboard",
+            },
         )
-        return redirect(redirect_destination)
+        # Send user into their new shop right away
+        if req.status_code != 200:
+            return redirect(url_for("error_creating_shop"))
+
+        shop_url = req.text
+        breakpoint()
+        return redirect(shop_url)
 
     return render_template("index.html")
+
+
+@app.route("/we-will-be-in-touch")
+def error_creating_shop():
+    return "Wow! Things we busy right now, don't worry, we're creating your shop and will be in touch"
 
 
 def send_mail(
