@@ -52,7 +52,6 @@ def index():
             return redirect(url_for("error_creating_shop"))
 
         shop_url = req.text
-        breakpoint()
         return redirect(shop_url)
 
     return render_template("index.html")
