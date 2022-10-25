@@ -9,6 +9,8 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
+import backoff
+from urllib.parse import urlparse
 
 load_dotenv()  # take environment variables from .env.
 
@@ -18,6 +20,16 @@ EMAIL_HOST = os.getenv("EMAIL_HOST")
 SUBSCRIBIE_SHOP_SUBMISSION_ENDPOINT = os.getenv("SUBSCRIBIE_SHOP_SUBMISSION_ENDPOINT")
 
 app = Flask(__name__)
+
+
+@backoff.on_exception(backoff.expo, (requests.exceptions.RequestException, Exception))
+def get_new_shop_url(url):
+    """get_new_shop_url will rety visiting the new shop url
+    until a http 200 response is received"""
+    req = requests.get(url)
+    if req.status_code != 200:
+        raise Exception("get_new_shop_url status_code was not 200, maybe retrying")
+    return req
 
 
 @app.route("/", methods=["POST", "GET"])
@@ -48,11 +60,14 @@ def index():
             },
         )
         # Send user into their new shop right away
-        if req.status_code != 200:
-            return redirect(url_for("error_creating_shop"))
+        login_url = req.text
+        shop_url = f"{urlparse(req.text).scheme}://{urlparse(req.text).netloc}"
+        # Retry until shop is ready
+        shop_ready = get_new_shop_url(shop_url)
 
-        shop_url = req.text
-        return redirect(shop_url)
+        # Take visitor directly into their shop
+        # note login_url is a one-time login url sent by Subscribie,
+        return redirect(login_url)
 
     return render_template("index.html")
 
