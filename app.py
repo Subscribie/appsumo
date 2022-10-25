@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, url_for
 import os
 import logging
 from dotenv import load_dotenv
@@ -22,7 +22,11 @@ SUBSCRIBIE_SHOP_SUBMISSION_ENDPOINT = os.getenv("SUBSCRIBIE_SHOP_SUBMISSION_ENDP
 app = Flask(__name__)
 
 
-@backoff.on_exception(backoff.expo, (requests.exceptions.RequestException, Exception))
+@backoff.on_exception(
+    backoff.expo,
+    (requests.exceptions.RequestException, Exception),
+    max_time=60,
+)
 def get_new_shop_url(url):
     """get_new_shop_url will rety visiting the new shop url
     until a http 200 response is received"""
@@ -62,8 +66,12 @@ def index():
         # Send user into their new shop right away
         login_url = req.text
         shop_url = f"{urlparse(req.text).scheme}://{urlparse(req.text).netloc}"
-        # Retry until shop is ready
-        shop_ready = get_new_shop_url(shop_url)
+
+        try:
+            # Retry until shop is ready
+            shop_ready = get_new_shop_url(shop_url)
+        except Exception as e:
+            return redirect(url_for("error_creating_shop"))
 
         # Take visitor directly into their shop
         # note login_url is a one-time login url sent by Subscribie,
@@ -74,7 +82,7 @@ def index():
 
 @app.route("/we-will-be-in-touch")
 def error_creating_shop():
-    return "Wow! Things we busy right now, don't worry, we're creating your shop and will be in touch"
+    return "<style>body { font-family: sans-serif;}</style><h1>Thanks! We'll be right with you...</h1><p>Things are super busy right now, but don't worry! We're creating your shop in a queue and will be in touch with you with your shop login soon.</p><p>Thank you for your patience. 😊</p>"
 
 
 def send_mail(
