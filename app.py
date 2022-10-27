@@ -50,7 +50,6 @@ def index():
             fp.write(submission)
         send_mail()
         # Submit new site build
-        breakpoint()
         req = requests.post(
             SUBSCRIBIE_SHOP_SUBMISSION_ENDPOINT,
             data={
@@ -63,7 +62,6 @@ def index():
                 "description-0": "Change plan description in your shop dashboard",
             },
         )
-        breakpoint()
         # Send user into their new shop right away
         login_url = req.text
         shop_url = f"{urlparse(req.text).scheme}://{urlparse(req.text).netloc}"
