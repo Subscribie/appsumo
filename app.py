@@ -18,7 +18,6 @@ SEND_FROM_EMAIL = os.getenv("SEND_FROM_EMAIL")
 SEND_TO_EMAIL = os.getenv("SEND_TO_EMAIL")
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 SUBSCRIBIE_SHOP_SUBMISSION_ENDPOINT = os.getenv("SUBSCRIBIE_SHOP_SUBMISSION_ENDPOINT")
-
 app = Flask(__name__)
 
 
@@ -51,6 +50,7 @@ def index():
             fp.write(submission)
         send_mail()
         # Submit new site build
+        breakpoint()
         req = requests.post(
             SUBSCRIBIE_SHOP_SUBMISSION_ENDPOINT,
             data={
@@ -63,13 +63,14 @@ def index():
                 "description-0": "Change plan description in your shop dashboard",
             },
         )
+        breakpoint()
         # Send user into their new shop right away
         login_url = req.text
         shop_url = f"{urlparse(req.text).scheme}://{urlparse(req.text).netloc}"
 
         try:
             # Retry until shop is ready
-            shop_ready = get_new_shop_url(shop_url)
+            get_new_shop_url(shop_url)
         except Exception as e:
             return redirect(url_for("error_creating_shop"))
 
