@@ -39,8 +39,8 @@ def get_new_shop_url(url):
 @app.route("/", methods=["POST", "GET"])
 @app.route("/appsumo", methods=["POST", "GET"])
 def index():
+    subscribie_domain = os.getenv("SUBSCRIBIE_DOMAIN")
     if request.method == "POST":
-        subscribie_domain = os.getenv("SUBSCRIBIE_DOMAIN")
         print(request.form)
         email = request.form.get("email")
         redemption_code = request.form.get("redemption_code")
@@ -83,9 +83,9 @@ def index():
             return redirect(login_url)
         else:
             flash("The Business Name already exists, please provide another name")
-            return redirect(url_for("index"))
+            return redirect(url_for("index", subscribie_domain=subscribie_domain))
 
-    return render_template("index.html")
+    return render_template("index.html", subscribie_domain=subscribie_domain)
 
 
 @app.route("/we-will-be-in-touch")

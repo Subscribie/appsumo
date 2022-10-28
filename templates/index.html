@@ -153,7 +153,7 @@
                       {% endif %}
                     {% endwith %}
 
-                  <input id="id_s32fso" name="company_name" style="box-sizing: border-box; flex-grow: 1; font-family: inherit; font-size: inherit; color: rgb(255, 255, 255); background-color: transparent; border-top-width: 1px; border-top-style: solid; border-top-color: rgb(0, 0, 0); border-right-width: 1px; border-right-style: solid; border-right-color: rgb(0, 0, 0); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(0, 0, 0); border-left-width: 1px; border-left-style: solid; border-left-color: rgb(0, 0, 0); padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; min-height: 42px; width: 100%; color:black;" placeholder="My amazing business..." required>
+                  <input id="company_name" name="company_name" style="box-sizing: border-box; flex-grow: 1; font-family: inherit; font-size: inherit; color: rgb(255, 255, 255); background-color: transparent; border-top-width: 1px; border-top-style: solid; border-top-color: rgb(0, 0, 0); border-right-width: 1px; border-right-style: solid; border-right-color: rgb(0, 0, 0); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(0, 0, 0); border-left-width: 1px; border-left-style: solid; border-left-color: rgb(0, 0, 0); padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; min-height: 42px; width: 100%; color:black;" placeholder="My amazing business..." required>
 
                 </div>
 
@@ -533,15 +533,26 @@
 </style>
 <script>
 function logSubmit(event) {
+  var exists = "false";
+  const company_name = document.getElementById("company_name").value;
   document.getElementById("submitBtn").style.display = "none";
   document.getElementById("pleaseWait").style.display = "";
-  log.textContent = `Form Submitted! Time stamp: ${event.timeStamp}`;
-  event.preventDefault();
-  document.getElementById("form").submit();
+  fetch(`{{ subscribie_domain }}/api/shop-name-taken/${company_name}`)
+      .then((response) => response.json())
+      .then((data) => exists = data; console.log(data));
+  console.log(exists);
+  if (exists == true) {
+    console.log("the site already exists");
+  }
+  else {
+    log.textContent = `Form Submitted! Time stamp: ${event.timeStamp}`;
+    event.preventDefault();
+    document.getElementById("form").submit();
+  }
 }
-
 const form = document.getElementById('form');
 form.addEventListener('submit', logSubmit);
+
 </script>
 
 </body>
