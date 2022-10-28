@@ -537,7 +537,7 @@ async function logSubmit(event) {
   document.getElementById("submitBtn").style.display = "none";
   document.getElementById("pleaseWait").style.display = "";
   event.preventDefault();
-  let exists = await fetch(`{{ subscribie_domain }}/api/shop-name-taken/${company_name}`)
+        let exists = await fetch(`{{ subscribie_domain }}/api/shop-name-taken/${company_name}`, {mode: 'no-cors'})
         .then(response => { return response.json() });
   console.log(exists);
   if (exists == true) {
