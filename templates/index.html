@@ -137,7 +137,7 @@
 
                 <div class="bee-field bee-field-id_s32fso" style="box-sizing: border-box; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; padding-left: 3px; display: flex; flex-grow: 1; flex-shrink: 1; flex-basis: 0%; flex-wrap: wrap; align-items: center;">
 
-                  <label for="id_s32fso" style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 200%; text-align: left; letter-spacing: normal; display: block; flex-basis: 100%; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; padding-left: 3px;">
+                  <label id="label_company_name" for="company_name" style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 200%; text-align: left; letter-spacing: normal; display: block; flex-basis: 100%; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; padding-left: 3px;">
 
                     Business Name (Shop Name)
 
@@ -532,21 +532,27 @@
 
 </style>
 <script>
-function logSubmit(event) {
-  var exists = "false";
+async function logSubmit(event) {
   const company_name = document.getElementById("company_name").value;
   document.getElementById("submitBtn").style.display = "none";
   document.getElementById("pleaseWait").style.display = "";
-  fetch(`{{ subscribie_domain }}/api/shop-name-taken/${company_name}`)
-      .then((response) => response.json())
-      .then((data) => exists = data; console.log(data));
+  event.preventDefault();
+  let exists = await fetch(`{{ subscribie_domain }}/api/shop-name-taken/${company_name}`)
+        .then(response => { return response.json() });
   console.log(exists);
   if (exists == true) {
     console.log("the site already exists");
+    document.getElementById("submitBtn").style.display = "";
+    document.getElementById("pleaseWait").style.display = "none";
+    if (!document.getElementById("message")) {
+        const label = document.createElement("label");
+        label.setAttribute("id", "message");
+        label.setAttribute("style", "color:red");
+        label.innerHTML = "* The Business Name already exists ";
+        document.getElementById("label_company_name").appendChild(label);
+    }
   }
   else {
-    log.textContent = `Form Submitted! Time stamp: ${event.timeStamp}`;
-    event.preventDefault();
     document.getElementById("form").submit();
   }
 }
