@@ -41,7 +41,6 @@ def get_new_shop_url(url):
 def index():
     subscribie_domain = os.getenv("SUBSCRIBIE_DOMAIN")
     if request.method == "POST":
-        breakpoint()
         session["formData"] = request.form
         print(request.form)
         email = request.form.get("email")
