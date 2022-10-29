@@ -127,7 +127,7 @@
 
                   </label>
 
-                  <input id="id_s561io" name="email" type="email" style="box-sizing: border-box; flex-grow: 1; font-family: inherit; font-size: inherit; color: rgb(255, 255, 255); background-color: transparent; border-top-width: 1px; border-top-style: solid; border-top-color: rgb(0, 0, 0); border-right-width: 1px; border-right-style: solid; border-right-color: rgb(0, 0, 0); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(0, 0, 0); border-left-width: 1px; border-left-style: solid; border-left-color: rgb(0, 0, 0); padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; min-height: 42px; width: 100%; color:black;" required>
+                  <input id="email" name="email" type="email" style="box-sizing: border-box; flex-grow: 1; font-family: inherit; font-size: inherit; color: rgb(255, 255, 255); background-color: transparent; border-top-width: 1px; border-top-style: solid; border-top-color: rgb(0, 0, 0); border-right-width: 1px; border-right-style: solid; border-right-color: rgb(0, 0, 0); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(0, 0, 0); border-left-width: 1px; border-left-style: solid; border-left-color: rgb(0, 0, 0); padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; min-height: 42px; width: 100%; color:black;" required>
 
                 </div>
 
@@ -135,15 +135,41 @@
 
               <div class="bee-form-row" style="box-sizing: border-box;">
 
-                <div class="bee-field bee-field-id_s561io" style="box-sizing: border-box; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; padding-left: 3px; display: flex; flex-grow: 1; flex-shrink: 1; flex-basis: 0%; flex-wrap: wrap; align-items: center;">
+                <div class="bee-field bee-field-id_s32fso" style="box-sizing: border-box; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; padding-left: 3px; display: flex; flex-grow: 1; flex-shrink: 1; flex-basis: 0%; flex-wrap: wrap; align-items: center;">
 
-                  <label for="id_s32fso" style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 200%; text-align: left; letter-spacing: normal; display: block; flex-basis: 100%; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; padding-left: 3px;">
+                  <label id="label_company_name" for="company_name" style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 200%; text-align: left; letter-spacing: normal; display: block; flex-basis: 100%; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; padding-left: 3px;">
 
                     Business Name (Shop Name)
+                  </label>
+
+                    {% with messages = get_flashed_messages() %}
+                      {% if messages %}
+                        <ul class=flashes>
+                        {% for message in messages %}
+                          <span style="color:red">{{ message }}</span>
+                        {% endfor %}
+                        </ul>
+                      {% endif %}
+                    {% endwith %}
+
+                  <input id="company_name" name="company_name" style="box-sizing: border-box; flex-grow: 1; font-family: inherit; font-size: inherit; color: rgb(255, 255, 255); background-color: transparent; border-top-width: 1px; border-top-style: solid; border-top-color: rgb(0, 0, 0); border-right-width: 1px; border-right-style: solid; border-right-color: rgb(0, 0, 0); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(0, 0, 0); border-left-width: 1px; border-left-style: solid; border-left-color: rgb(0, 0, 0); padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; min-height: 42px; width: 100%; color:black;" placeholder="My amazing business..." required>
+                    <span id="shopName-taken-error" style="display: none; font-weight:bold">Sorry that shop name is already taken, please try a different name</span>
+
+                </div>
+
+              </div>
+
+              <div class="bee-form-row" style="box-sizing: border-box;">
+
+                <div class="bee-field bee-field-id_s99fso" style="box-sizing: border-box; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; padding-left: 3px; display: flex; flex-grow: 1; flex-shrink: 1; flex-basis: 0%; flex-wrap: wrap; align-items: center;">
+
+                  <label for="id_s99fso" style="box-sizing: border-box; color: rgb(0, 0, 0); line-height: 200%; text-align: left; letter-spacing: normal; display: block; flex-basis: 100%; padding-top: 3px; padding-right: 3px; padding-bottom: 3px; padding-left: 3px;">
+
+                    Shop Password
 
                   </label>
 
-                  <input id="id_s32fso" name="company_name" style="box-sizing: border-box; flex-grow: 1; font-family: inherit; font-size: inherit; color: rgb(255, 255, 255); background-color: transparent; border-top-width: 1px; border-top-style: solid; border-top-color: rgb(0, 0, 0); border-right-width: 1px; border-right-style: solid; border-right-color: rgb(0, 0, 0); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(0, 0, 0); border-left-width: 1px; border-left-style: solid; border-left-color: rgb(0, 0, 0); padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; min-height: 42px; width: 100%; color:black;" placeholder="My amazing business..." required>
+                  <input id="id_s99fso" name="password" type="password" style="box-sizing: border-box; flex-grow: 1; font-family: inherit; font-size: inherit; color: rgb(255, 255, 255); background-color: transparent; border-top-width: 1px; border-top-style: solid; border-top-color: rgb(0, 0, 0); border-right-width: 1px; border-right-style: solid; border-right-color: rgb(0, 0, 0); border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(0, 0, 0); border-left-width: 1px; border-left-style: solid; border-left-color: rgb(0, 0, 0); padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; min-height: 42px; width: 100%; color:black;" required>
 
                 </div>
 
@@ -506,16 +532,45 @@
 
 </style>
 <script>
-function logSubmit(event) {
+async function logSubmit(event) {
+  const company_name = document.getElementById("company_name").value;
   document.getElementById("submitBtn").style.display = "none";
   document.getElementById("pleaseWait").style.display = "";
-  log.textContent = `Form Submitted! Time stamp: ${event.timeStamp}`;
   event.preventDefault();
   document.getElementById("form").submit();
 }
-
 const form = document.getElementById('form');
 form.addEventListener('submit', logSubmit);
+
+function debounce(func, timeout = 300) {
+/* See https://www.freecodecamp.org/news/javascript-debounce-example/ */
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => { func.apply(this. args); }, timeout);
+    };
+}
+
+
+function checkShopNameExists(e) {
+    const company_name = document.getElementById("company_name").value;
+        fetch(`{{ subscribie_domain }}/api/shop-name-taken/${company_name}`, {mode: 'cors'})
+            .then((response) => response.json() )
+      .then((data) => {
+          console.log(data);
+          if ( data == "true" || data == true) {
+            document.getElementById("shopName-taken-error").style.display = "";
+            } else {
+            document.getElementById("shopName-taken-error").style.display = "none";
+          }
+
+      });
+}
+
+// Check if shopName already taken
+company_name.addEventListener('keyup', debounce(() => checkShopNameExists()));
+
+
 </script>
 
 </body>

@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, flash
 import os
 import logging
 from dotenv import load_dotenv
@@ -19,6 +19,7 @@ SEND_TO_EMAIL = os.getenv("SEND_TO_EMAIL")
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 SUBSCRIBIE_SHOP_SUBMISSION_ENDPOINT = os.getenv("SUBSCRIBIE_SHOP_SUBMISSION_ENDPOINT")
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY")
 
 
 @backoff.on_exception(
@@ -38,6 +39,7 @@ def get_new_shop_url(url):
 @app.route("/", methods=["POST", "GET"])
 @app.route("/appsumo", methods=["POST", "GET"])
 def index():
+    subscribie_domain = os.getenv("SUBSCRIBIE_DOMAIN")
     if request.method == "POST":
         print(request.form)
         email = request.form.get("email")
@@ -46,37 +48,44 @@ def index():
         company_name = request.form.get("company_name")
         password = request.form.get("password")
         submission = f"{email},{redemption_code},{person_name}, {company_name}\n"
-        with open("./submissions.csv", "a") as fp:
-            fp.write(submission)
-        send_mail()
-        # Submit new site build
-        req = requests.post(
-            SUBSCRIBIE_SHOP_SUBMISSION_ENDPOINT,
-            data={
-                "company_name": company_name,
-                "email": email,
-                "password": password,
-                "title-0": "Plan 1",
-                "interval_amount-0": 10099,
-                "interval_unit-0": "monthly",
-                "description-0": "Change plan description in your shop dashboard",
-            },
+        check_shop_name = requests.get(
+            f"{subscribie_domain}/api/shop-name-taken/{company_name}"
         )
-        # Send user into their new shop right away
-        login_url = req.text
-        shop_url = f"{urlparse(req.text).scheme}://{urlparse(req.text).netloc}"
+        if check_shop_name.json() is False:
+            with open("./submissions.csv", "a") as fp:
+                fp.write(submission)
+            send_mail()
+            # Submit new site build
+            req = requests.post(
+                SUBSCRIBIE_SHOP_SUBMISSION_ENDPOINT,
+                data={
+                    "company_name": company_name,
+                    "email": email,
+                    "password": password,
+                    "title-0": "Plan 1",
+                    "interval_amount-0": 10099,
+                    "interval_unit-0": "monthly",
+                    "description-0": "Change plan description in your shop dashboard",
+                },
+            )
+            # Send user into their new shop right away
+            login_url = req.text
+            shop_url = f"{urlparse(req.text).scheme}://{urlparse(req.text).netloc}"
 
-        try:
-            # Retry until shop is ready
-            get_new_shop_url(shop_url)
-        except Exception as e:
-            return redirect(url_for("error_creating_shop"))
+            try:
+                # Retry until shop is ready
+                get_new_shop_url(shop_url)
+            except Exception as e:
+                return redirect(url_for("error_creating_shop"))
 
-        # Take visitor directly into their shop
-        # note login_url is a one-time login url sent by Subscribie,
-        return redirect(login_url)
+            # Take visitor directly into their shop
+            # note login_url is a one-time login url sent by Subscribie,
+            return redirect(login_url)
+        else:
+            flash("The Business Name already exists, please provide another name")
+            return redirect(url_for("index", subscribie_domain=subscribie_domain))
 
-    return render_template("index.html")
+    return render_template("index.html", subscribie_domain=subscribie_domain)
 
 
 @app.route("/we-will-be-in-touch")
