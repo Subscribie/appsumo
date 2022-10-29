@@ -85,7 +85,8 @@ def index():
         else:
             flash("The Business Name already exists, please provide another name")
             return redirect(url_for("index", subscribie_domain=subscribie_domain))
-
+    if session.get("formData") == None:
+        session["formData"] = {}
     return render_template("index.html", subscribie_domain=subscribie_domain)
 
 
