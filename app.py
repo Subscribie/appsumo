@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for, flash
+from flask import Flask, request, render_template, redirect, url_for, flash, session
 import os
 import logging
 from dotenv import load_dotenv
@@ -41,6 +41,8 @@ def get_new_shop_url(url):
 def index():
     subscribie_domain = os.getenv("SUBSCRIBIE_DOMAIN")
     if request.method == "POST":
+        breakpoint()
+        session["formData"] = request.form
         print(request.form)
         email = request.form.get("email")
         redemption_code = request.form.get("redemption_code")
