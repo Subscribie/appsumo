@@ -35,11 +35,22 @@ def get_new_shop_url(url):
         raise Exception("get_new_shop_url status_code was not 200, maybe retrying")
     return req
 
+@app.route("/test")
+def test():
+    return request.url
 
 @app.route("/", methods=["POST", "GET"])
 @app.route("/appsumo", methods=["POST", "GET"])
+@app.route("/pitchground", methods=["POST", "GET"])
 def index():
     subscribie_domain = os.getenv("SUBSCRIBIE_DOMAIN")
+    if 'appsumo' in request.url:
+        reseller = "AppSumo"
+    elif 'pitchground' in request.url:
+        reseller = "PitchGround"
+    else:
+        reseller = request.path.replace("/","").capitalize()
+
     if request.method == "POST":
         session["formData"] = request.form
         print(request.form)
@@ -87,7 +98,7 @@ def index():
             return redirect(url_for("index", subscribie_domain=subscribie_domain))
     if session.get("formData") == None:
         session["formData"] = {}
-    return render_template("index.html", subscribie_domain=subscribie_domain)
+    return render_template("index.html", subscribie_domain=subscribie_domain, reseller=reseller)
 
 
 @app.route("/we-will-be-in-touch")
