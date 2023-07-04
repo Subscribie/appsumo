@@ -42,12 +42,15 @@ def test():
 @app.route("/", methods=["POST", "GET"])
 @app.route("/appsumo", methods=["POST", "GET"])
 @app.route("/pitchground", methods=["POST", "GET"])
+@app.route("/coderedemption", methods=["POST", "GET"]
 def index():
     subscribie_domain = os.getenv("SUBSCRIBIE_DOMAIN")
     if 'appsumo' in request.url:
         reseller = "AppSumo"
     elif 'pitchground' in request.url:
         reseller = "PitchGround"
+    elif 'coderedemption' in request.url:
+        reseller = "Lifetime"
     else:
         reseller = request.path.replace("/","").capitalize()
 
