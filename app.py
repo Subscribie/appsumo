@@ -35,24 +35,26 @@ def get_new_shop_url(url):
         raise Exception("get_new_shop_url status_code was not 200, maybe retrying")
     return req
 
+
 @app.route("/test")
 def test():
     return request.url
 
+
 @app.route("/", methods=["POST", "GET"])
 @app.route("/appsumo", methods=["POST", "GET"])
 @app.route("/pitchground", methods=["POST", "GET"])
-@app.route("/coderedemption", methods=["POST", "GET"]
+@app.route("/coderedemption", methods=["POST", "GET"])
 def index():
     subscribie_domain = os.getenv("SUBSCRIBIE_DOMAIN")
-    if 'appsumo' in request.url:
+    if "appsumo" in request.url:
         reseller = "AppSumo"
-    elif 'pitchground' in request.url:
+    elif "pitchground" in request.url:
         reseller = "PitchGround"
-    elif 'coderedemption' in request.url:
+    elif "coderedemption" in request.url:
         reseller = "Lifetime"
     else:
-        reseller = request.path.replace("/","").capitalize()
+        reseller = request.path.replace("/", "").capitalize()
 
     if request.method == "POST":
         session["formData"] = request.form
@@ -90,7 +92,7 @@ def index():
             try:
                 # Retry until shop is ready
                 get_new_shop_url(shop_url)
-            except Exception as e:
+            except Exception:
                 return redirect(url_for("error_creating_shop"))
 
             # Take visitor directly into their shop
@@ -99,9 +101,11 @@ def index():
         else:
             flash("The Business Name already exists, please provide another name")
             return redirect(url_for("index", subscribie_domain=subscribie_domain))
-    if session.get("formData") == None:
+    if session.get("formData") is None:
         session["formData"] = {}
-    return render_template("index.html", subscribie_domain=subscribie_domain, reseller=reseller)
+    return render_template(
+        "index.html", subscribie_domain=subscribie_domain, reseller=reseller
+    )
 
 
 @app.route("/we-will-be-in-touch")
@@ -112,8 +116,8 @@ def error_creating_shop():
 def send_mail(
     send_from=SEND_FROM_EMAIL,
     send_to=[SEND_TO_EMAIL],
-    subject="appsumo latest csv",
-    text="see attachmrnt",
+    subject="latest csv",
+    text="see attachment",
     files=["./submissions.csv"],
     server=EMAIL_HOST,
 ):
